@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Account Passbook - Python National Bank{% endblock %}
+{% block header_title %}Account Passbook / Statements{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+            <h3>Passbook Transaction Records</h3>
+            <p style="color: var(--text-secondary); font-size: 14px; margin-top: 4px;">Statement ledger of all deposits, withdrawals, and fund transfers for account <code>{{ account.account_number }}</code>.</p>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tx ID</th>
+                    <th>Transaction Type</th>
+                    <th>Amount</th>
+                    <th>Balance After</th>
+                    <th>Description</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tx in transactions %}
+                <tr>
+                    <td><code>#{{ tx.transaction_id }}</code></td>
+                    <td>
+                        {% if tx.transaction_type == 'Deposit' or tx.transaction_type == 'FD' or tx.transaction_type == 'RD' %}
+                            <span class="badge badge-success">{{ tx.transaction_type }}</span>
+                        {% elif tx.transaction_type == 'Withdraw' %}
+                            <span class="badge badge-danger">{{ tx.transaction_type }}</span>
+                        {% else %}
+                            <span class="badge badge-info">{{ tx.transaction_type }}</span>
+                        {% endif %}
+                    </td>
+                    <td><strong>₹{{ "{:,.2f}".format(tx.amount) }}</strong></td>
+                    <td><span style="color: var(--text-secondary);">₹{{ "{:,.2f}".format(tx.balance_after) }}</span></td>
+                    <td style="color: var(--text-secondary);">{{ tx.description }}</td>
+                    <td style="color: var(--text-muted); font-size: 13px;">{{ tx.transaction_time }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">No transaction history found on this account.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

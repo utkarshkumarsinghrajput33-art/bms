@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Beneficiaries - Python National Bank{% endblock %}
+{% block header_title %}Transfer Beneficiaries{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <!-- Add Beneficiary Form -->
+    <div class="glass-card">
+        <h3>Add New Beneficiary</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 14px;">Register a new recipient account number for quick money transfers later without re-entering details.</p>
+        
+        <form action="{{ url_for('customer_beneficiary') }}" method="POST">
+            <div class="form-group">
+                <label class="form-label">Beneficiary Account Number</label>
+                <input type="text" class="form-control" name="beneficiary_account" placeholder="Enter 12-digit account number" required>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 28px;">
+                <label class="form-label">Nick Name / Full Name</label>
+                <input type="text" class="form-control" name="beneficiary_name" placeholder="e.g. Rahul Sharma" required>
+            </div>
+            
+            <div style="display: flex; justify-content: flex-end;">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-circle-plus"></i> Add Beneficiary
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Beneficiaries List -->
+    <div class="glass-card" style="display: flex; flex-direction: column;">
+        <h3>My Beneficiaries List</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 14px;">List of saved beneficiaries associated with your account.</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; max-height: 520px; overflow-y: auto; padding-right: 4px;">
+            {% for b in beneficiaries %}
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); border-radius: var(--border-radius-md); padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h4 style="color: var(--primary);">{{ b.beneficiary_name }}</h4>
+                    <div style="font-size: 13px; color: var(--text-secondary); font-family: monospace; margin-top: 4px;">A/C: {{ b.beneficiary_account }}</div>
+                </div>
+                <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                    <span class="badge badge-info" style="font-size: 10px;">Added: {{ b.added_date }}</span>
+                    <a href="{{ url_for('customer_transfer') }}?to={{ b.beneficiary_account }}" class="btn btn-secondary" style="padding: 4px 8px; font-size: 12px; border-radius: 4px;">
+                        <i class="fa-solid fa-paper-plane"></i> Send
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <div style="text-align: center; color: var(--text-muted); padding: 40px;">No saved beneficiaries yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

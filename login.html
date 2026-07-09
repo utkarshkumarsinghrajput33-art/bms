@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Python National Bank</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body style="background-image: none; background-color: var(--bg-primary);">
+
+    <!-- Toast Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-container">
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}" id="flash-{{ loop.index }}">
+              {% if category == 'success' %}
+                <i class="fa-solid fa-circle-check" style="color: var(--success);"></i>
+              {% elif category == 'error' %}
+                <i class="fa-solid fa-circle-xmark" style="color: var(--danger);"></i>
+              {% endif %}
+              <span>{{ message }}</span>
+            </div>
+            <script>
+              setTimeout(() => {
+                const element = document.getElementById('flash-{{ loop.index }}');
+                if (element) {
+                  element.style.opacity = '0';
+                  element.style.transform = 'translateY(-20px) scale(0.95)';
+                  element.style.transition = 'all 0.3s ease';
+                  setTimeout(() => element.remove(), 300);
+                }
+              }, 4000);
+            </script>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="login-container">
+        <!-- Brand Side Panel -->
+        <div class="login-brand-side">
+            <div class="login-logo">
+                <i class="fa-solid fa-building-columns"></i>
+            </div>
+            <h1 class="login-title">Secure &amp; Smart <br><span class="text-gradient">Banking Portal</span></h1>
+            <p class="login-subtitle">Access your account, transfer funds instantly, apply for premium loans, and manage investments on our high-performance secure digital platform.</p>
+            
+            <div class="login-features">
+                <div class="login-feature-item">
+                    <div class="login-feature-icon">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div class="login-feature-text">Military-grade Data Encryption</div>
+                </div>
+                <div class="login-feature-item">
+                    <div class="login-feature-icon">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div class="login-feature-text">Instant Money Transfers &amp; Transactions</div>
+                </div>
+                <div class="login-feature-item">
+                    <div class="login-feature-icon">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <div class="login-feature-text">Integrated Fixed &amp; Recurring Deposits</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Side Panel -->
+        <div class="login-form-side">
+            <div class="login-form-box">
+                <div style="margin-bottom: 40px; text-align: center;">
+                    <h2 style="font-size: 28px; margin-bottom: 8px;">Welcome Back</h2>
+                    <p style="color: var(--text-secondary);">Select portal to login to your workspace</p>
+                </div>
+
+                <!-- Tab toggles -->
+                <div class="login-tabs">
+                    <div class="login-tab-btn active" id="tab-customer" onclick="switchTab('customer')">
+                        <i class="fa-solid fa-user"></i> &nbsp;Customer
+                    </div>
+                    <div class="login-tab-btn" id="tab-admin" onclick="switchTab('admin')">
+                        <i class="fa-solid fa-user-tie"></i> &nbsp;Admin
+                    </div>
+                </div>
+
+                <!-- Customer Login Form -->
+                <div class="login-form-section active" id="form-customer">
+                    <form action="{{ url_for('login') }}" method="POST">
+                        <input type="hidden" name="role" value="customer">
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="account_number">Account Number</label>
+                            <input type="text" class="form-control" name="account_number" placeholder="Enter your 12-digit account number" required>
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom: 32px;">
+                            <label class="form-label" for="password">Login Password</label>
+                            <input type="password" class="form-control" name="password" placeholder="Enter your password" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px;">
+                            Sign In As Customer &nbsp;<i class="fa-solid fa-arrow-right-to-bracket"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Admin Login Form -->
+                <div class="login-form-section" id="form-admin">
+                    <form action="{{ url_for('login') }}" method="POST">
+                        <input type="hidden" name="role" value="admin">
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="username">Admin Username</label>
+                            <input type="text" class="form-control" name="username" placeholder="Enter admin username" required>
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom: 32px;">
+                            <label class="form-label" for="password">Password</label>
+                            <input type="password" class="form-control" name="password" placeholder="Enter security password" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-secondary" style="width: 100%; padding: 14px;">
+                            Sign In As Admin &nbsp;<i class="fa-solid fa-arrow-right-to-bracket"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toggle scripts -->
+    <script>
+        function switchTab(role) {
+            document.querySelectorAll('.login-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.login-form-section').forEach(form => form.classList.remove('active'));
+            
+            if (role === 'customer') {
+                document.getElementById('tab-customer').classList.add('active');
+                document.getElementById('form-customer').classList.add('active');
+            } else {
+                document.getElementById('tab-admin').classList.add('active');
+                document.getElementById('form-admin').classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

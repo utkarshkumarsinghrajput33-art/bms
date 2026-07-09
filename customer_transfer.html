@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Fund Transfer - Python National Bank{% endblock %}
+{% block header_title %}Instant Fund Transfer{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <!-- Left Panel: Transfer Form -->
+    <div class="glass-card">
+        <h3>Transfer Money Instantly</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 14px;">Send money to another registered bank account instantly. Transaction charges are ₹0.00.</p>
+        
+        <form action="{{ url_for('customer_transfer') }}" method="POST">
+            <!-- Selector to choose how to transfer -->
+            <div class="form-group">
+                <label class="form-label">Transfer Destination</label>
+                <select class="form-control" id="dest-type" onchange="toggleDest()" required>
+                    <option value="beneficiary">Select From Added Beneficiaries</option>
+                    <option value="direct">Direct Account Transfer (Enter Account No.)</option>
+                </select>
+            </div>
+
+            <!-- Beneficiary Selector -->
+            <div class="form-group" id="group-beneficiary">
+                <label class="form-label">Select Beneficiary</label>
+                <select class="form-control" name="beneficiary_account">
+                    <option value="">-- Choose Beneficiary --</option>
+                    {% for b in beneficiaries %}
+                        <option value="{{ b.beneficiary_account }}">{{ b.beneficiary_name }} (A/C: {{ b.beneficiary_account }})</option>
+                    {% endfor %}
+                </select>
+                <div style="margin-top: 8px; font-size: 13px;">
+                    <a href="{{ url_for('customer_beneficiary') }}" style="color: var(--primary); text-decoration: none;"><i class="fa-solid fa-user-plus"></i> Add new beneficiary profile</a>
+                </div>
+            </div>
+
+            <!-- Direct Account Number Input -->
+            <div class="form-group" id="group-direct" style="display: none;">
+                <label class="form-label">Destination Account Number</label>
+                <input type="text" class="form-control" name="direct_account" placeholder="Enter recipient's 12-digit account number">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Transfer Amount (INR)</label>
+                <input type="number" step="0.01" class="form-control" name="amount" placeholder="e.g. ₹5,000" required>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 28px;">
+                <label class="form-label">Add Remarks (Optional)</label>
+                <input type="text" class="form-control" name="description" placeholder="e.g. Rent, Office Bill">
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+                <button type="submit" class="btn btn-primary" style="padding: 14px 28px;">
+                    <i class="fa-solid fa-paper-plane"></i> Send Funds Now
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Right Panel: Balance Limits Check -->
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+        <div class="glass-card">
+            <h3>Account Liquidity Check</h3>
+            <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                    <span style="color: var(--text-secondary);">Your Balance</span>
+                    <strong style="color: var(--secondary); font-size: 20px;">₹{{ "{:,.2f}".format(account.balance) }}</strong>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                    <span style="color: var(--text-secondary);">Account Type</span>
+                    <strong style="color: var(--text-primary);">{{ account.account_type }}</strong>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--text-secondary);">Required Min. Balance</span>
+                    {% if account.account_type == 'Savings' %}
+                        <strong style="color: var(--warning);">₹1,000.00</strong>
+                    {% else %}
+                        <strong style="color: var(--warning);">₹5,000.00</strong>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card" style="background: linear-gradient(135deg, var(--glass-bg), rgba(239, 68, 68, 0.015)); border-color: rgba(239, 68, 68, 0.1);">
+            <h4 style="color: var(--danger);"><i class="fa-solid fa-circle-exclamation"></i> Security Warning</h4>
+            <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-top: 8px;">Ensure recipient details are correct. Fund transfers are permanent and cannot be rolled back without administrative audit approval.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Switch Tab Script -->
+<script>
+    function toggleDest() {
+        const destType = document.getElementById('dest-type').value;
+        const groupBeneficiary = document.getElementById('group-beneficiary');
+        const groupDirect = document.getElementById('group-direct');
+        
+        if (destType === 'beneficiary') {
+            groupBeneficiary.style.display = 'flex';
+            groupDirect.style.display = 'none';
+            document.querySelector('[name="direct_account"]').removeAttribute('required');
+        } else {
+            groupBeneficiary.style.display = 'none';
+            groupDirect.style.display = 'flex';
+            document.querySelector('[name="direct_account"]').setAttribute('required', 'required');
+        }
+    }
+</script>
+{% endblock %}

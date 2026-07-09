@@ -1,0 +1,806 @@
+/* 
+=============================================================
+Banking Management System - State Bank of India (SBI) Theme
+Clean white background, slate borders, and rich SBI Blue accents.
+=============================================================
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --bg-primary: #f4f6f9;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f8fafc;
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    
+    /* SBI Corporate Colors */
+    --primary: #0082c3;          /* SBI Signature Blue */
+    --primary-dark: #003366;     /* SBI Deep Navy */
+    --primary-glow: rgba(0, 130, 195, 0.1);
+    --secondary: #00b5ef;        /* SBI Secondary Blue/Cyan */
+    --secondary-glow: rgba(0, 181, 239, 0.1);
+    
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    
+    /* White Card Theme Settings */
+    --glass-bg: #ffffff;
+    --glass-border: #e2e8f0;
+    --glass-shadow: rgba(148, 163, 184, 0.12);
+    
+    --font-primary: 'Open Sans', sans-serif;
+    --font-secondary: 'Plus Jakarta Sans', sans-serif;
+    
+    --sidebar-width: 280px;
+    --border-radius-lg: 8px;      /* Slightly sharper corporate corners */
+    --border-radius-md: 6px;
+    --border-radius-sm: 4px;
+    
+    --transition-fast: 0.15s ease-in-out;
+    --transition-normal: 0.25s ease-in-out;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image: none; /* Removed dynamic gradients for clean white theme */
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: var(--border-radius-sm);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* SBI Card Styling */
+.glass-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 4px 12px var(--glass-shadow);
+    padding: 24px;
+    transition: var(--transition-normal);
+}
+.glass-card:hover {
+    box-shadow: 0 6px 18px rgba(148, 163, 184, 0.2);
+}
+
+/* Text styles */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-secondary);
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Layout framework */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SBI Sidebar styling */
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--primary-dark); /* SBI Signature Navy Blue Background */
+    border-right: 1px solid var(--primary-dark);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    z-index: 100;
+    transition: var(--transition-normal);
+}
+
+.sidebar-brand {
+    padding: 28px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* SBI Circular Logo Representation */
+.sidebar-brand-logo {
+    width: 38px;
+    height: 38px;
+    background: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-weight: 800;
+    font-size: 18px;
+    position: relative;
+}
+
+/* Small keyhole cutout at the bottom of SBI logo */
+.sidebar-brand-logo::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    width: 8px;
+    height: 12px;
+    background-color: var(--primary-dark);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.sidebar-brand-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 16px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-grow: 1;
+}
+
+.sidebar-menu-item a {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: var(--border-radius-md);
+    transition: var(--transition-fast);
+}
+
+.sidebar-menu-item a:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-menu-item.active a {
+    color: #ffffff;
+    background: var(--primary);
+}
+
+.sidebar-menu-item.active a i {
+    color: #ffffff;
+}
+
+.sidebar-footer {
+    padding: 20px 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar-user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--secondary);
+    color: #ffffff;
+}
+
+.sidebar-user-info {
+    overflow: hidden;
+}
+
+.sidebar-user-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.sidebar-user-role {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+/* Main Content Area */
+.main-wrapper {
+    margin-left: var(--sidebar-width);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-header {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    border-bottom: 1px solid #e2e8f0;
+    background: #ffffff;
+}
+
+.header-title h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.main-content {
+    padding: 32px 40px;
+    flex-grow: 1;
+}
+
+/* Grid & Layout Utilities */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-left: 4px solid var(--primary); /* Left border highlights like SBI */
+}
+
+.stat-card:nth-child(2) {
+    border-left-color: var(--secondary);
+}
+
+.stat-card:nth-child(3) {
+    border-left-color: var(--success);
+}
+
+.stat-card:nth-child(4) {
+    border-left-color: var(--warning);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: white;
+}
+
+.stat-icon.primary {
+    background: var(--primary);
+}
+
+.stat-icon.secondary {
+    background: var(--secondary);
+}
+
+.stat-icon.success {
+    background: var(--success);
+}
+
+.stat-icon.warning {
+    background: var(--warning);
+}
+
+.stat-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* SBI Form Styling */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 14px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: var(--border-radius-sm);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: 14px;
+    transition: var(--transition-fast);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.form-control::placeholder {
+    color: #94a3b8;
+}
+
+/* Select custom dropdown */
+select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+select.form-control option {
+    background-color: #ffffff;
+    color: var(--text-primary);
+}
+
+/* SBI Corporate Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-family: var(--font-secondary);
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: var(--border-radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 130, 195, 0.15);
+}
+
+.btn-primary:hover {
+    background: #0071ab;
+    box-shadow: 0 4px 8px rgba(0, 130, 195, 0.25);
+}
+
+.btn-secondary {
+    background: var(--secondary);
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 181, 239, 0.15);
+}
+
+.btn-secondary:hover {
+    background: #00a2d6;
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: white;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.15);
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid #cbd5e1;
+    color: var(--text-secondary);
+}
+
+.btn-outline:hover {
+    background: #f1f5f9;
+    color: var(--primary-dark);
+}
+
+/* SBI Retail Tables */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--glass-border);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 14px;
+    background: #ffffff;
+}
+
+.table th {
+    background: #f1f5f9;
+    color: var(--primary-dark);
+    padding: 14px 16px;
+    font-weight: 700;
+    font-family: var(--font-secondary);
+    border-bottom: 2px solid #cbd5e1;
+}
+
+.table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #e2e8f0;
+    color: var(--text-primary);
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+.table tbody tr {
+    transition: var(--transition-fast);
+}
+
+.table tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* Badges / Tags */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 4px;
+}
+
+.badge-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.badge-warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+    border: 1px solid rgba(245, 158, 11, 0.15);
+}
+
+.badge-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.15);
+}
+
+.badge-info {
+    background: rgba(0, 130, 195, 0.1);
+    color: var(--primary);
+    border: 1px solid rgba(0, 130, 195, 0.15);
+}
+
+/* Toast Notifications */
+.flash-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 400px;
+}
+
+.flash-message {
+    padding: 14px 18px;
+    border-radius: var(--border-radius-sm);
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    animation: slideIn 0.3s ease-out forwards;
+}
+
+.flash-message.success {
+    border-left: 4px solid var(--success);
+}
+
+.flash-message.error {
+    border-left: 4px solid var(--danger);
+}
+
+.flash-message.warning {
+    border-left: 4px solid var(--warning);
+}
+
+.flash-message.info {
+    border-left: 4px solid var(--primary);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* SBI Split-screen Login Page */
+.login-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.login-brand-side {
+    flex: 1.1;
+    background: radial-gradient(circle at 10% 20%, rgba(0, 130, 195, 0.05) 0%, transparent 60%),
+                linear-gradient(135deg, #f8fafc, #f1f5f9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px;
+    border-right: 1px solid #e2e8f0;
+}
+
+.login-logo {
+    width: 60px;
+    height: 60px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 32px;
+    position: relative;
+}
+
+.login-logo::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    width: 12px;
+    height: 18px;
+    background-color: #f1f5f9;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.login-title {
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 20px;
+    color: var(--primary-dark);
+}
+
+.login-subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+    max-width: 480px;
+    line-height: 1.6;
+}
+
+.login-features {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.login-feature-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.login-feature-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-size: 16px;
+}
+
+.login-feature-text {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.login-form-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px;
+    background: #ffffff;
+}
+
+.login-form-box {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.login-tabs {
+    display: flex;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: var(--border-radius-sm);
+    padding: 4px;
+    margin-bottom: 28px;
+}
+
+.login-tab-btn {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-family: var(--font-secondary);
+    font-weight: 600;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: var(--transition-fast);
+    font-size: 14px;
+}
+
+.login-tab-btn.active {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: var(--primary-dark);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.login-form-section {
+    display: none;
+}
+
+.login-form-section.active {
+    display: block;
+}
+
+/* Dashboard Layout */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 32px;
+}
+
+.quick-actions-panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.action-btn {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: var(--border-radius-sm);
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    transition: var(--transition-fast);
+}
+
+.action-btn i {
+    font-size: 20px;
+    color: var(--primary);
+}
+
+.action-btn:hover {
+    background: #f8fafc;
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* Responsive queries */
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .login-container {
+        flex-direction: column;
+    }
+    .login-brand-side {
+        padding: 40px;
+    }
+    .login-form-side {
+        padding: 40px;
+    }
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    .main-wrapper {
+        margin-left: 0;
+    }
+    .main-header {
+        padding: 0 20px;
+    }
+    .main-content {
+        padding: 24px 20px;
+    }
+}

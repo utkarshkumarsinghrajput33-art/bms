@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}My Account Dashboard - Python National Bank{% endblock %}
+{% block header_title %}Account Dashboard{% endblock %}
+
+{% block content %}
+<!-- Welcome & Hero Section -->
+<div class="stats-grid" style="grid-template-columns: 2fr 1fr; margin-bottom: 32px;">
+    <!-- Balance Card -->
+    <div class="glass-card" style="position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(17, 24, 39, 0.8), rgba(99, 102, 241, 0.05)); border: 1px solid rgba(255, 255, 255, 0.1);">
+        <div style="position: absolute; right: -20px; bottom: -20px; font-size: 150px; color: rgba(255,255,255,0.015); pointer-events: none;"><i class="fa-solid fa-wallet"></i></div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+            <div>
+                <span class="badge badge-info" style="font-size: 13px; font-family: monospace;">{{ account.account_type.upper() }} ACCOUNT</span>
+                <h4 style="margin-top: 8px; font-family: monospace; font-size: 22px; color: var(--text-primary);">{{ account.account_number }}</h4>
+            </div>
+            {% if account.status == 'Active' %}
+                <span class="badge badge-success" style="padding: 6px 12px; font-size: 13px;"><i class="fa-solid fa-circle-check"></i> &nbsp;{{ account.status }}</span>
+            {% else %}
+                <span class="badge badge-danger" style="padding: 6px 12px; font-size: 13px;">{{ account.status }}</span>
+            {% endif %}
+        </div>
+
+        <span style="font-size: 14px; color: var(--text-secondary); font-weight: 500;">Available Balance</span>
+        <h1 style="font-size: 48px; font-weight: 800; color: var(--text-primary); margin-top: 4px; font-family: var(--font-secondary);">₹{{ "{:,.2f}".format(account.balance) }}</h1>
+        
+        <div style="margin-top: 24px; display: flex; gap: 24px; font-size: 14px; color: var(--text-secondary); border-top: 1px solid rgba(255,255,255,0.04); padding-top: 16px;">
+            <div>Account Holder: <strong style="color: var(--text-primary);">{{ account.first_name }} {{ account.last_name or '' }}</strong></div>
+            <div>Opened Date: <strong style="color: var(--text-primary);">{{ account.opening_date }}</strong></div>
+        </div>
+    </div>
+
+    <!-- Home Branch Card -->
+    <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h3 style="color: var(--primary); margin-bottom: 12px;"><i class="fa-solid fa-map-location-dot"></i> Home Branch</h3>
+            <h4 style="color: var(--text-primary); font-size: 18px; margin-bottom: 6px;">{{ account.branch_name }}</h4>
+            <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;">Branch Code: <strong>{{ account.branch_code }}</strong></div>
+            <div style="font-size: 13px; color: var(--text-secondary);">IFSC Code: <strong>{{ account.ifsc_code }}</strong></div>
+        </div>
+        <div style="font-size: 13px; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.04); padding-top: 12px; margin-top: 12px;">
+            {{ account.address }}, {{ account.city }}, {{ account.state }}
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <!-- Transactions Log -->
+    <div class="glass-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <h3>Recent Transactions</h3>
+            <a href="{{ url_for('customer_transactions') }}" class="btn btn-outline" style="padding: 6px 12px; font-size: 13px;">View Passbook</a>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tx ID</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Balance After</th>
+                        <th>Description</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in transactions %}
+                    <tr>
+                        <td><code>#{{ tx.transaction_id }}</code></td>
+                        <td>
+                            {% if tx.transaction_type == 'Deposit' or tx.transaction_type == 'FD' or tx.transaction_type == 'RD' %}
+                                <span class="badge badge-success">{{ tx.transaction_type }}</span>
+                            {% elif tx.transaction_type == 'Withdraw' %}
+                                <span class="badge badge-danger">{{ tx.transaction_type }}</span>
+                            {% else %}
+                                <span class="badge badge-info">{{ tx.transaction_type }}</span>
+                            {% endif %}
+                        </td>
+                        <td><strong>₹{{ "{:,.2f}".format(tx.amount) }}</strong></td>
+                        <td><span style="color: var(--text-secondary);">₹{{ "{:,.2f}".format(tx.balance_after) }}</span></td>
+                        <td style="color: var(--text-secondary);">{{ tx.description }}</td>
+                        <td style="color: var(--text-muted); font-size: 13px;">{{ tx.transaction_time }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">No transactions logged on this account yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Quick Services / Cash Desk Simulations -->
+    <div style="display: flex; flex-direction: column; gap: 32px;">
+        <!-- Service Actions Panel -->
+        <div class="glass-card">
+            <h3>Quick Services</h3>
+            <div class="quick-actions-panel" style="grid-template-columns: repeat(2, 1fr);">
+                <a href="{{ url_for('customer_transfer') }}" class="action-btn">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Transfer Money</span>
+                </a>
+                <a href="{{ url_for('customer_beneficiary') }}" class="action-btn">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>Beneficiaries</span>
+                </a>
+                <a href="{{ url_for('customer_loans') }}" class="action-btn">
+                    <i class="fa-solid fa-hand-holding-dollar"></i>
+                    <span>Apply for Loan</span>
+                </a>
+                <a href="{{ url_for('customer_fd') }}" class="action-btn">
+                    <i class="fa-solid fa-vault"></i>
+                    <span>Open FD</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Cash Deposit / Withdraw Simulator Desk -->
+        <div class="glass-card" style="background: linear-gradient(135deg, var(--glass-bg), rgba(20, 184, 166, 0.02));">
+            <h3>ATM &amp; Cash Simulator</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 14px;">Simulate Cash Deposits and Withdrawals directly from this local panel.</p>
+            
+            <form action="{{ url_for('customer_cash_action') }}" method="POST">
+                <div class="form-group">
+                    <label class="form-label">Simulation Operation</label>
+                    <select class="form-control" name="operation" required>
+                        <option value="Deposit">Deposit Cash</option>
+                        <option value="Withdraw">Withdraw Cash</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="form-label">Amount (INR)</label>
+                    <input type="number" step="0.01" class="form-control" name="amount" placeholder="Enter amount to simulate" required>
+                </div>
+                
+                <button type="submit" class="btn btn-secondary" style="width: 100%;">
+                    <i class="fa-solid fa-microchip"></i> Execute Cash Action
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

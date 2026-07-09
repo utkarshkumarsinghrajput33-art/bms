@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block title %}Recurring Deposit - Python National Bank{% endblock %}
+{% block header_title %}Recurring Deposit Vault{% endblock %}
+
+{% block content %}
+<div class="stats-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 32px;">
+    <!-- Open RD Card -->
+    <div class="glass-card">
+        <h3>Create Recurring Deposit</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 14px;">Invest a fixed monthly amount over a selected term to earn high compounding returns.</p>
+        
+        <form action="{{ url_for('customer_rd') }}" method="POST">
+            <div class="form-group">
+                <label class="form-label">Monthly Investment Amount (INR)</label>
+                <input type="number" step="0.01" class="form-control" name="amount" id="rd_amount" placeholder="Min. ₹500" oninput="calculateRD()" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Tenure Duration</label>
+                <select class="form-control" name="tenure" id="rd_tenure" onchange="calculateRD()" required>
+                    <option value="12">12 Months (6.20% interest)</option>
+                    <option value="24">24 Months (6.60% interest)</option>
+                    <option value="36">36 Months (6.90% interest)</option>
+                    <option value="60">60 Months (7.20% interest)</option>
+                </select>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--glass-border); border-radius: var(--border-radius-sm); padding: 12px; margin-bottom: 20px; font-size: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="color: var(--text-secondary);">Interest Rate</span>
+                    <strong style="color: var(--text-primary);" id="rd-rate">6.20%</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--text-secondary);">Maturity Value</span>
+                    <strong style="color: var(--secondary); font-size: 18px;" id="rd-maturity">₹0.00</strong>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-piggy-bank"></i> Open RD Account
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Interest rates grid -->
+    <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h3>RD Interest Rate Structure</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 14px;">Guaranteed annual interest rates on regular monthly deposits.</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                    <span style="color: var(--text-secondary);">1 Year (12 Months)</span>
+                    <strong style="color: var(--text-primary);">6.20% P.A.</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                    <span style="color: var(--text-secondary);">2 Years (24 Months)</span>
+                    <strong style="color: var(--text-primary);">6.60% P.A.</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                    <span style="color: var(--text-secondary);">3 Years (36 Months)</span>
+                    <strong style="color: var(--text-primary);">6.90% P.A.</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-secondary);">5 Years (60 Months)</span>
+                    <strong style="color: var(--text-primary);">7.20% P.A.</strong>
+                </div>
+            </div>
+        </div>
+
+        <div style="background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.15); border-radius: var(--border-radius-sm); padding: 12px; font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-top: 12px;">
+            <i class="fa-solid fa-clock-rotate-left" style="color: var(--primary);"></i> Ensure sufficient balance is maintained in your primary account each month to avoid RD installment auto-deduction failures.
+        </div>
+    </div>
+</div>
+
+<!-- RD List Table -->
+<div class="glass-card">
+    <h3>My Recurring Deposits</h3>
+    <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 14px;">Review all active monthly term deposit records.</p>
+    
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>RD ID</th>
+                    <th>Monthly Contribution</th>
+                    <th>Interest Rate</th>
+                    <th>Tenure</th>
+                    <th>Start Date</th>
+                    <th>Maturity Date</th>
+                    <th>Maturity Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rd in rds %}
+                <tr>
+                    <td><code>#{{ rd.rd_id }}</code></td>
+                    <td><strong>₹{{ "{:,.2f}".format(rd.monthly_amount) }}</strong></td>
+                    <td><span class="badge badge-success">{{ rd.interest_rate }}%</span></td>
+                    <td>{{ rd.tenure_months }} Months</td>
+                    <td style="color: var(--text-secondary);">{{ rd.start_date }}</td>
+                    <td style="color: var(--text-secondary);">{{ rd.maturity_date }}</td>
+                    <td><strong style="color: var(--secondary);">₹{{ "{:,.2f}".format(rd.maturity_amount) }}</strong></td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 24px;">No recurring deposits active on this account.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- RD Calculator Script -->
+<script>
+    const rdRates = {
+        '12': 6.20,
+        '24': 6.60,
+        '36': 6.90,
+        '60': 7.20
+    };
+
+    function calculateRD() {
+        const amount = parseFloat(document.getElementById('rd_amount').value);
+        const tenure = document.getElementById('rd_tenure').value;
+        const rate = rdRates[tenure];
+        
+        document.getElementById('rd-rate').textContent = rate.toFixed(2) + '%';
+        
+        if (isNaN(amount) || amount <= 0) {
+            document.getElementById('rd-maturity').textContent = '₹0.00';
+            return;
+        }
+
+        // RD Maturity Formula: M = P * ((1 + r/n)^(n*t) - 1) / (1 - (1 + r/n)^(-1/n))
+        // using standard recurring deposit compound calculations (compounded quarterly, n=4)
+        const n = 4; // compounding frequency per year
+        const r = rate / 100;
+        const months = parseInt(tenure);
+        const t = 1 / 12; // monthly time steps
+        
+        let maturity = 0;
+        for (let i = 1; i <= months; i++) {
+            // each monthly installment compounding for remaining months
+            const compoundTime = (months - i + 1) / 12;
+            maturity += amount * Math.pow(1 + r / n, n * compoundTime);
+        }
+
+        document.getElementById('rd-maturity').textContent = '₹' + maturity.toLocaleString('en-IN', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+        });
+    }
+</script>
+{% endblock %}

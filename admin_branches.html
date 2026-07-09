@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Branches - Python National Bank{% endblock %}
+{% block header_title %}Branch Management{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <!-- Left panel: Add Branch Form -->
+    <div class="glass-card">
+        <h3>Register New Branch</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 14px;">Create a new physical or virtual branch location inside the bank database.</p>
+        
+        <form action="{{ url_for('admin_branches') }}" method="POST">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Branch Name</label>
+                    <input type="text" class="form-control" name="branch_name" placeholder="e.g. Connaught Place Branch" required>
+                </div>
+                
+                <div class="form-grid" style="grid-column: 1/-1; gap: 20px; grid-template-columns: 1fr 1fr;">
+                    <div class="form-group">
+                        <label class="form-label">Branch Code</label>
+                        <input type="text" class="form-control" name="branch_code" placeholder="e.g. B001 (B + 3 Digits)" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">IFSC Code</label>
+                        <input type="text" class="form-control" name="ifsc_code" placeholder="e.g. PNB0001234" required>
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Address Details</label>
+                    <input type="text" class="form-control" name="address" placeholder="e.g. 12, Parliament Street" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">City</label>
+                    <input type="text" class="form-control" name="city" placeholder="New Delhi" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">State</label>
+                    <input type="text" class="form-control" name="state" placeholder="Delhi" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Pincode</label>
+                    <input type="text" class="form-control" name="pincode" placeholder="110001" required>
+                </div>
+            </div>
+
+            <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-circle-plus"></i> Save Branch
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Right panel: Existing Branches -->
+    <div class="glass-card" style="display: flex; flex-direction: column;">
+        <h3>Registered Branches</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 14px;">List of all active branch locations.</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; max-height: 520px; overflow-y: auto; padding-right: 4px;">
+            {% for b in branches %}
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); border-radius: var(--border-radius-md); padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <h4 style="color: var(--primary);">{{ b.branch_name }}</h4>
+                    <span class="badge badge-info">ID: {{ b.branch_id }}</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; color: var(--text-secondary);">
+                    <div>Code: <strong>{{ b.branch_code }}</strong></div>
+                    <div>IFSC: <strong>{{ b.ifsc_code }}</strong></div>
+                </div>
+                <div style="font-size: 13px; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.04); padding-top: 8px; margin-top: 4px;">
+                    <i class="fa-solid fa-location-dot"></i> {{ b.address }}, {{ b.city }}, {{ b.state }} - {{ b.pincode }}
+                </div>
+            </div>
+            {% else %}
+            <div style="text-align: center; color: var(--text-muted); padding: 40px;">No registered branches yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Python National Bank{% endblock %}</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Toast Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-container">
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}" id="flash-{{ loop.index }}">
+              {% if category == 'success' %}
+                <i class="fa-solid fa-circle-check" style="color: var(--success);"></i>
+              {% elif category == 'error' %}
+                <i class="fa-solid fa-circle-xmark" style="color: var(--danger);"></i>
+              {% elif category == 'warning' %}
+                <i class="fa-solid fa-triangle-exclamation" style="color: var(--warning);"></i>
+              {% else %}
+                <i class="fa-solid fa-circle-info" style="color: var(--primary);"></i>
+              {% endif %}
+              <span>{{ message }}</span>
+            </div>
+            <script>
+              setTimeout(() => {
+                const element = document.getElementById('flash-{{ loop.index }}');
+                if (element) {
+                  element.style.opacity = '0';
+                  element.style.transform = 'translateY(-20px) scale(0.95)';
+                  element.style.transition = 'all 0.3s ease';
+                  setTimeout(() => element.remove(), 300);
+                }
+              }, 4000);
+            </script>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-logo">
+                    <i class="fa-solid fa-building-columns"></i>
+                </div>
+                <div class="sidebar-brand-name">PNB Portal</div>
+            </div>
+
+            <ul class="sidebar-menu">
+                {% if session.get('role') == 'admin' %}
+                    <li class="sidebar-menu-item {% if active_page == 'admin_dashboard' %}active{% endif %}">
+                        <a href="{{ url_for('admin_dashboard') }}">
+                            <i class="fa-solid fa-chart-pie"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item {% if active_page == 'admin_branches' %}active{% endif %}">
+                        <a href="{{ url_for('admin_branches') }}">
+                            <i class="fa-solid fa-code-branch"></i>
+                            <span>Branches</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item {% if active_page == 'admin_customers' %}active{% endif %}">
+                        <a href="{{ url_for('admin_customers') }}">
+                            <i class="fa-solid fa-users"></i>
+                            <span>Customers</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item {% if active_page == 'admin_accounts' %}active{% endif %}">
+                        <a href="{{ url_for('admin_accounts') }}">
+                            <i class="fa-solid fa-wallet"></i>
+                            <span>Accounts</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item {% if active_page == 'admin_loans' %}active{% endif %}">
+                        <a href="{{ url_for('admin_loans') }}">
+                            <i class="fa-solid fa-hand-holding-dollar"></i>
+                            <span>Loan Approvals</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item {% if active_page == 'admin_transactions' %}active{% endif %}">
+                        <a href="{{ url_for('admin_transactions') }}">
+                            <i class="fa-solid fa-receipt"></i>
+                            <span>Transactions</span>
+                        </a>
+                    </li>
+                {% elif session.get('role') == 'customer' %}
+                    <li class="sidebar-menu-item {% if active_page == 'customer_dashboard' %}active{% endif %}">
+                        <a href="{{ url_for('customer_dashboard') }}">
+                            <i class="fa-solid fa-house"></i>
+                            <span>My Account</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item {% if active_page == 'customer_transfer' %}active{% endif %}">
+                        <a href="{{ url_for('customer_transfer') }}">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Fund Transfer</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item {% if active_page == 'customer_beneficiary' %}active{% endif %}">
+                        <a href="{{ url_for('customer_beneficiary') }}">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <span>Beneficiaries</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item {% if active_page == 'customer_loans' %}active{% endif %}">
+                        <a href="{{ url_for('customer_loans') }}">
+                            <i class="fa-solid fa-hand-holding-dollar"></i>
+                            <span>Loans</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item {% if active_page == 'customer_fd' %}active{% endif %}">
+                        <a href="{{ url_for('customer_fd') }}">
+                            <i class="fa-solid fa-vault"></i>
+                            <span>Fixed Deposit</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item {% if active_page == 'customer_rd' %}active{% endif %}">
+                        <a href="{{ url_for('customer_rd') }}">
+                            <i class="fa-solid fa-piggy-bank"></i>
+                            <span>Recurring Deposit</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item {% if active_page == 'customer_transactions' %}active{% endif %}">
+                        <a href="{{ url_for('customer_transactions') }}">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                            <span>Passbook</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">
+                        {% if session.get('role') == 'admin' %}
+                            <i class="fa-solid fa-user-tie"></i>
+                        {% else %}
+                            <i class="fa-solid fa-user"></i>
+                        {% endif %}
+                    </div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">
+                            {% if session.get('role') == 'admin' %}
+                                {{ session.get('username') }}
+                            {% else %}
+                                Account: {{ session.get('account_number') }}
+                            {% endif %}
+                        </div>
+                        <div class="sidebar-user-role">
+                            {% if session.get('role') == 'admin' %}
+                                System Administrator
+                            {% else %}
+                                Customer Portal
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 16px;">
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline" style="width: 100%; padding: 8px 12px; font-size: 13px;">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Wrapper -->
+        <div class="main-wrapper">
+            <header class="main-header">
+                <div class="header-title">
+                    <h2>{% block header_title %}Python National Bank{% endblock %}</h2>
+                </div>
+                <div class="header-actions">
+                    <div>
+                        <span class="badge badge-info">
+                            <i class="fa-regular fa-calendar-days"></i> &nbsp;<span id="current-date"></span>
+                        </span>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main-content">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Date Script -->
+    <script>
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+    </script>
+</body>
+</html>

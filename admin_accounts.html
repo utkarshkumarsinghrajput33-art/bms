@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Open Accounts - Python National Bank{% endblock %}
+{% block header_title %}Account Management{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <!-- Left Panel: Create Account Form -->
+    <div class="glass-card">
+        <h3>Create Savings or Current Account</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 14px;">Open a new bank account associated with a registered customer profile and local branch.</p>
+        
+        <form action="{{ url_for('admin_accounts') }}" method="POST">
+            <div class="form-group">
+                <label class="form-label">Associate Customer Profile</label>
+                <select class="form-control" name="customer_id" required>
+                    <option value="">-- Choose Customer --</option>
+                    {% for c in customers %}
+                        <option value="{{ c.customer_id }}">{{ c.first_name }} {{ c.last_name or '' }} (ID: {{ c.customer_id }} | Mob: {{ c.mobile }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Select Home Branch</label>
+                <select class="form-control" name="branch_id" required>
+                    <option value="">-- Choose Branch --</option>
+                    {% for b in branches %}
+                        <option value="{{ b.branch_id }}">{{ b.branch_name }} ({{ b.ifsc_code }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-grid" style="gap: 20px; grid-template-columns: 1fr 1fr;">
+                <div class="form-group">
+                    <label class="form-label">Account Type</label>
+                    <select class="form-control" name="account_type" required>
+                        <option value="Savings">Savings Account</option>
+                        <option value="Current">Current Account</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Opening Deposit (INR)</label>
+                    <input type="number" step="0.01" class="form-control" name="balance" placeholder="Min. ₹1000 for Savings" required>
+                </div>
+            </div>
+
+            <div class="form-grid" style="gap: 20px; grid-template-columns: 1fr 1fr;">
+                <div class="form-group">
+                    <label class="form-label">Set ATM PIN (4 digits)</label>
+                    <input type="password" maxlength="4" pattern="\d{4}" class="form-control" name="atm_pin" placeholder="e.g. 1234" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Customer Portal Password</label>
+                    <input type="password" class="form-control" name="login_password" placeholder="Create strong portal password" required>
+                </div>
+            </div>
+
+            <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-wallet"></i> Open Account
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Right Panel: Accounts List Summary -->
+    <div class="glass-card" style="display: flex; flex-direction: column;">
+        <h3>Open Accounts</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 14px;">Recent accounts opened on the platform.</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; max-height: 520px; overflow-y: auto; padding-right: 4px;">
+            {% for a in accounts %}
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); border-radius: var(--border-radius-md); padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <span style="font-size: 12px; color: var(--text-muted);">Account Number</span>
+                        <h4 style="color: var(--primary); font-family: monospace; font-size: 18px;">{{ a.account_number }}</h4>
+                    </div>
+                    {% if a.status == 'Active' %}
+                        <span class="badge badge-success">{{ a.status }}</span>
+                    {% elif a.status == 'Frozen' %}
+                        <span class="badge badge-warning">{{ a.status }}</span>
+                    {% else %}
+                        <span class="badge badge-danger">{{ a.status }}</span>
+                    {% endif %}
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 8px; margin-top: 4px;">
+                    <div>
+                        <div style="font-size: 13px; color: var(--text-primary); font-weight: 600;">{{ a.first_name }} {{ a.last_name or '' }}</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">Type: {{ a.account_type }} | Branch: {{ a.branch_name }}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 11px; color: var(--text-muted); display: block;">Balance</span>
+                        <strong style="color: var(--secondary); font-size: 16px;">₹{{ "{:,.2f}".format(a.balance) }}</strong>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div style="text-align: center; color: var(--text-muted); padding: 40px;">No accounts found.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

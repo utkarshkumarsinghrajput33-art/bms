@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Customers - Python National Bank{% endblock %}
+{% block header_title %}Customer Management{% endblock %}
+
+{% block content %}
+<div style="display: flex; flex-direction: column; gap: 32px;">
+    <!-- Add Customer Section -->
+    <div class="glass-card">
+        <h3>Register New Customer Profile</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 14px;">Fill in the profile details to enroll a new customer into the banking database system.</p>
+        
+        <form action="{{ url_for('admin_customers') }}" method="POST">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">First Name</label>
+                    <input type="text" class="form-control" name="first_name" placeholder="John" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" class="form-control" name="last_name" placeholder="Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Gender</label>
+                    <select class="form-control" name="gender" required>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Date of Birth</label>
+                    <input type="date" class="form-control" name="dob" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Mobile Number</label>
+                    <input type="text" class="form-control" name="mobile" placeholder="10-digit number" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-control" name="email" placeholder="name@domain.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Aadhaar Card Number</label>
+                    <input type="text" class="form-control" name="aadhaar" placeholder="12-digit number" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">PAN Card Number</label>
+                    <input type="text" class="form-control" name="pan" placeholder="10-digit alphanumeric" style="text-transform: uppercase;" required>
+                </div>
+
+                <div class="form-group full-width">
+                    <label class="form-label">Residential Address</label>
+                    <input type="text" class="form-control" name="address" placeholder="Full house address details" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">City</label>
+                    <input type="text" class="form-control" name="city" placeholder="e.g. Mumbai" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">State</label>
+                    <input type="text" class="form-control" name="state" placeholder="e.g. Maharashtra" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Pincode</label>
+                    <input type="text" class="form-control" name="pincode" placeholder="6-digit PIN" required>
+                </div>
+            </div>
+
+            <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-user-plus"></i> Register Profile
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Customers List Section -->
+    <div class="glass-card">
+        <h3>Registered Customers</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 14px;">Review all currently enrolled customer demographic details.</p>
+        
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Mobile</th>
+                        <th>Email</th>
+                        <th>Aadhaar</th>
+                        <th>PAN</th>
+                        <th>City / State</th>
+                        <th>Enrolled On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in customers %}
+                    <tr>
+                        <td><code>#{{ c.customer_id }}</code></td>
+                        <td><strong>{{ c.first_name }} {{ c.last_name or '' }}</strong> <span style="font-size: 12px; color: var(--text-muted);">({{ c.gender }})</span></td>
+                        <td><code>{{ c.mobile }}</code></td>
+                        <td>{{ c.email }}</td>
+                        <td><code>{{ c.aadhaar }}</code></td>
+                        <td><code>{{ c.pan }}</code></td>
+                        <td>{{ c.city }}, {{ c.state }}</td>
+                        <td style="color: var(--text-muted); font-size: 13px;">{{ c.created_at }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" style="text-align: center; color: var(--text-muted);">No customer profiles found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
